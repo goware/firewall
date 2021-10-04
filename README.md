@@ -58,11 +58,16 @@ func main() {
 }
 
 ```
+
+> Friendly Tip we get ip address of clients by parsing the list of X-FORWARDED-FOR header, so that we can avoid proxy
+> addresses, to learn more visit: [CloudFlare Real IP](https://support.cloudflare.com/hc/en-us/articles/206776727-Understanding-the-True-Client-IP-Header)
+> Also Read: [Blog]( https://husobee.github.io/golang/ip-address/2015/12/17/remote-ip-go.html)
+
 ## Credits
 
  - [go-cidranger](https://github.com/libp2p/go-cidranger)
    This middleware is based on this implementation of storing ip ranges in a data structre
    It makes it very efficient to store ip ranges and check if an ip is in one of those ranges
-
+ 
 ## LICENSE
 [MIT](LICENSE)
