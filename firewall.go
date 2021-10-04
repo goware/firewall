@@ -14,20 +14,15 @@ func Firewall(allowList *AllowIPTree, blockList *BlockList, fwBlockOverride func
 			// converts ip addr string to net.IP
 			ip := net.ParseIP(ipAddr)
 			if inBlockList, _ := blockList.Contains(ip); inBlockList {
-				if allowList.Search(ip) {
-					// ip in allowList -> Serve request
-					goto SERVE
+				// check if ip is not in allowList and is not being
+				// overriden by fwBlockOverride
+				if !allowList.Search(ip) && !fwBlockOverride(r) {
+					// ip is blocked
+					time.Sleep(29 * time.Second)
+					w.WriteHeader(403)
+					return
 				}
-				if fwBlockOverride(r) {
-					// request is override through BlockOverride func -> serve request
-					goto SERVE
-				}
-				// ip is blocked
-				time.Sleep(29 * time.Second)
-				w.WriteHeader(403)
-				return
 			}
-		SERVE:
 			h.ServeHTTP(w, r)
 		}
 		return http.HandlerFunc(fn)

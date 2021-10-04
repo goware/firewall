@@ -7,7 +7,7 @@ import (
 )
 
 // BlockList inherits from cidranger.Ranger
-//credits github.com/libp2p/go-cidranger
+// credits github.com/libp2p/go-cidranger
 type BlockList struct {
 	cidranger.Ranger
 }

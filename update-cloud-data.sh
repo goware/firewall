@@ -6,7 +6,7 @@ echo $green
 
 LINKS="https://www.gstatic.com/ipranges/goog.json gcp-ip-ranges.json"
 
-cd cloudProviderData
+cd ./cmd/cloud-provider-data
 
 # aws
 echo "Downloading AWS Ranges..."
@@ -25,7 +25,7 @@ echo "Downloading Azure Ranges..."
 curl -s -L -o azure-original-ranges.json $AZURE_FILE_LINK
 
 echo "Converting Azure Ranges to new format..."
-go run ./cmd/cloud-provider-data/main.go
+go run ./main.go
 
 
 echo "done"
