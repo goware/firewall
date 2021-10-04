@@ -58,6 +58,11 @@ func main() {
 }
 
 ```
+## Credits
+
+ - [go-cidranger](https://github.com/libp2p/go-cidranger)
+   This middleware is based on this implementation of storing ip ranges in a data structre
+   It makes it very efficient to store ip ranges and check if an ip is in one of those ranges
 
 ## LICENSE
 [MIT](LICENSE)
