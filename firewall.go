@@ -13,32 +13,15 @@ type BlockList struct {
 	cidranger.Ranger
 }
 
-func (bl *BlockList) appendIPBlocks(IPBlocks []string) error {
-	var (
-		err   error
-		IPNet *net.IPNet
-	)
-	for _, IPBlock := range IPBlocks {
-		if IPBlock != "" {
-			_, IPNet, err = net.ParseCIDR(IPBlock)
-			if err != nil {
-				return err
-			}
-			bl.Insert(cidranger.NewBasicRangerEntry(*IPNet))
-		}
-	}
-	return nil
-}
-
 // NewIPBlockList returns a new BlockList with inserted CIDR Ranges
 func NewIPBlockList(IPBlocks []string) (*BlockList, error) {
-	bl := BlockList{cidranger.NewPCTrieRanger()}
+	bl := &BlockList{cidranger.NewPCTrieRanger()}
 	err := bl.appendIPBlocks(IPBlocks)
 	if err != nil {
 		return nil, err
 	}
 
-	return &bl, nil
+	return bl, nil
 }
 
 // AppendIPBlocks Appends more CIDR Ranges to the BlockList Struct
@@ -73,4 +56,21 @@ func Firewall(allowList *AllowIPTree, blockList *BlockList, fwBlockOverride func
 		return http.HandlerFunc(fn)
 	}
 	return f
+}
+
+func (bl *BlockList) appendIPBlocks(IPBlocks []string) error {
+	var (
+		err   error
+		IPNet *net.IPNet
+	)
+	for _, IPBlock := range IPBlocks {
+		if IPBlock != "" {
+			_, IPNet, err = net.ParseCIDR(IPBlock)
+			if err != nil {
+				return err
+			}
+			bl.Insert(cidranger.NewBasicRangerEntry(*IPNet))
+		}
+	}
+	return nil
 }

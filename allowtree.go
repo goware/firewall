@@ -13,6 +13,47 @@ type AllowIPTree struct {
 
 	entry net.IP
 }
+
+// Search searches for an IP object inside the AllowIPTree struct
+func (a *AllowIPTree) Search(IP net.IP) (inTree bool) {
+	if compareEntries(IP, a.entry) > 0 {
+		// move right
+		if a.rightNode == nil {
+			return false
+		} else if a.rightNode.entry.To4().String() == IP.To4().String() {
+			return true
+		} else {
+			a.rightNode.Search(IP)
+		}
+	} else {
+		// move left
+		if a.leftNode == nil {
+			return false
+		} else if a.leftNode.entry.To4().String() == IP.To4().String() {
+			return true
+		} else {
+			a.leftNode.Search(IP)
+		}
+	}
+	return
+}
+
+// AppendIPList appends a slice of ip strings to the AllowIPTree struct
+func (a *AllowIPTree) AppendIPList(IPs []string) error {
+	return a.parseAllowIPAddress(IPs)
+}
+
+// NewIPAllowList returns a new AllowIPTree struct with already inserted
+// slice of IPs.
+func NewIPAllowList(IPs []string) (*AllowIPTree, error) {
+	var allowList AllowIPTree
+	err := allowList.AppendIPList(IPs)
+	if err != nil {
+		return nil, err
+	}
+	return &allowList, nil
+}
+
 // compareEntries compares two ip addresses and inserts them
 func compareEntries(entry1 net.IP, entry2 net.IP) int {
 	return bytes.Compare([]byte(entry1.String()), []byte(entry2.String()))
@@ -41,30 +82,6 @@ func (a *AllowIPTree) insert(entry net.IP) error {
 	return nil
 }
 
-// Search searches for an IP object inside the AllowIPTree struct
-func (a *AllowIPTree) Search(IP net.IP) (inTree bool) {
-	if compareEntries(IP, a.entry) > 0 {
-		// move right
-		if a.rightNode == nil {
-			return false
-		} else if a.rightNode.entry.To4().String() == IP.To4().String() {
-			return true
-		} else {
-			a.rightNode.Search(IP)
-		}
-	} else {
-		// move left
-		if a.leftNode == nil {
-			return false
-		} else if a.leftNode.entry.To4().String() == IP.To4().String() {
-			return true
-		} else {
-			a.leftNode.Search(IP)
-		}
-	}
-	return
-}
-
 func (a *AllowIPTree) parseAllowIPAddress(IPAddresses []string) error {
 	var (
 		err error
@@ -86,20 +103,4 @@ func (a *AllowIPTree) parseAllowIPAddress(IPAddresses []string) error {
 		}
 	}
 	return nil
-}
-
-// AppendIPList appends a slice of ip strings to the AllowIPTree struct
-func (a *AllowIPTree) AppendIPList(IPs []string) error {
-	return a.parseAllowIPAddress(IPs)
-}
-
-// NewIPAllowList returns a new AllowIPTree struct with already inserted
-// slice of IPs.
-func NewIPAllowList(IPs []string) (*AllowIPTree, error) {
-	var allowList AllowIPTree
-	err := allowList.AppendIPList(IPs)
-	if err != nil {
-		return nil, err
-	}
-	return &allowList, nil
 }

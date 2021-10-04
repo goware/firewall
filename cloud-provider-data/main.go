@@ -8,30 +8,30 @@ import (
 	"os"
 )
 
-type azureIn struct {
-	Values []values `json:"values"`
+type azureOriginalRanges struct {
+	Values []azureValues `json:"azureValues"`
 }
 
-type values struct {
-	Properties properties `json:"properties"`
+type azureValues struct {
+	Properties azureProperties `json:"azureProperties"`
 }
 
-type properties struct {
+type azureProperties struct {
 	AddressPrefixes []string `json:"addressPrefixes"`
 }
 
-type azureOut struct {
-	Prefixes []prefix `json:"prefixes"`
+type azureModifiedRanges struct {
+	Prefixes []azurePrefix `json:"prefixes"`
 }
 
-type prefix struct {
+type azurePrefix struct {
 	IPPrefix string `json:"ip_prefix"`
 }
 
 func main() {
 	var (
-		azureData azureIn
-		out       azureOut
+		azureData azureOriginalRanges
+		out       azureModifiedRanges
 	)
 
 	file, err := os.Open("azure-original-ranges.json")
@@ -46,9 +46,10 @@ func main() {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+
 	for _, value := range azureData.Values {
 		for _, address := range value.Properties.AddressPrefixes {
-			out.Prefixes = append(out.Prefixes, prefix{address})
+			out.Prefixes = append(out.Prefixes, azurePrefix{address})
 		}
 	}
 	outfile, _ := json.MarshalIndent(out, "", " ")
