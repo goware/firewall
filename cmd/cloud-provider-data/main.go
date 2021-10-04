@@ -34,6 +34,7 @@ func main() {
 		out       azureModifiedRanges
 	)
 
+	// TODO: change, why is this hardcoded..?
 	file, err := os.Open("azure-original-ranges.json")
 	if err != nil {
 		log.Print(err)

@@ -5,8 +5,15 @@ import (
 	"encoding/json"
 )
 
+var cloudProviderBlockList []string = nil
+
 // CloudProviderBlockList returns a slice of IP Ranges of aws, azure and gcp
 func CloudProviderBlockList() (blockList []string) {
+	if cloudProviderBlockList != nil {
+		// return memoized list
+		return cloudProviderBlockList
+	}
+
 	var (
 		awsRanges   awsRanges
 		azureRanges azureRanges
@@ -14,7 +21,10 @@ func CloudProviderBlockList() (blockList []string) {
 	)
 
 	// aws
-	json.Unmarshal(awsFile, &awsRanges)
+	err := json.Unmarshal(awsFile, &awsRanges)
+	if err != nil {
+		panic(err)
+	}
 
 	for _, prefix := range awsRanges.Prefixes {
 		if prefix.IPPrefix != "" {
@@ -39,6 +49,10 @@ func CloudProviderBlockList() (blockList []string) {
 			blockList = append(blockList, prefix.IPv6Prefix)
 		}
 	}
+
+	// memoize
+	cloudProviderBlockList = blockList
+
 	return blockList
 }
 

@@ -25,7 +25,7 @@ echo "Downloading Azure Ranges..."
 curl -s -L -o azure-original-ranges.json $AZURE_FILE_LINK
 
 echo "Converting Azure Ranges to new format..."
-go run ./main.go
+go run ./cmd/cloud-provider-data/main.go
 
 
 echo "done"
