@@ -24,15 +24,24 @@ import (
 )
 
 func main() {
+	// Create New Router
 	r := chi.NewRouter()
+   // Create Block list
+   // firewall.CloudProviderBlockList() returns a list of string of ip ranges of
+   // gcp, aws, azure
 	blockList, err := firewall.NewIPList(firewall.CloudProviderBlockList())
 	if err != nil {
 		panic(err.Error())
 	}
+   // Add more IP range Blocks to the list
 	err = blockList.AppendIPBlocks([]string{"127.0.0.0/1", "::1/128"})
 	if err != nil {
 		panic(err.Error())
 	}
+	// Create an allowList
+    // if an ip range is in the blocklist ranges, but is inside allowlist
+    // then the request is served
+    // This is usefull to unblock your own hosted services
 	// make allowList with ip addr in cidr notation,
 	// so we can insert ip ranges and ip addr
 	// refer https://whatismyipaddress.com/cidr
@@ -40,6 +49,10 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
+    // fwBlockOverride is a function that is called if 
+    // an ip is inside the blocklist, and is not in allowlist
+    // this function returns a bool
+    // if its true, then the client is approved and served
 	fwBlockOverride := func(r *http.Request) bool {
 		if r.Header.Get("internal") == "true" {
 			return true
