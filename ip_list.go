@@ -6,15 +6,15 @@ import (
 	"github.com/libp2p/go-cidranger"
 )
 
-// BlockList inherits from cidranger.Ranger
-//credits github.com/libp2p/go-cidranger
-type BlockList struct {
+// IPList inherits from cidranger.Ranger
+// credits github.com/libp2p/go-cidranger
+type IPList struct {
 	cidranger.Ranger
 }
 
-// NewIPBlockList returns a new BlockList with inserted CIDR Ranges
-func NewIPBlockList(IPBlocks []string) (*BlockList, error) {
-	bl := &BlockList{cidranger.NewPCTrieRanger()}
+// NewIPList returns a new IPList with inserted CIDR Ranges
+func NewIPList(IPBlocks []string) (*IPList, error) {
+	bl := &IPList{cidranger.NewPCTrieRanger()}
 	err := bl.appendIPBlocks(IPBlocks)
 	if err != nil {
 		return nil, err
@@ -23,12 +23,12 @@ func NewIPBlockList(IPBlocks []string) (*BlockList, error) {
 	return bl, nil
 }
 
-// AppendIPBlocks Appends more CIDR Ranges to the BlockList Struct
-func (bl *BlockList) AppendIPBlocks(IPBlocks []string) error {
+// AppendIPBlocks Appends more CIDR Ranges to the IPList Struct
+func (bl *IPList) AppendIPBlocks(IPBlocks []string) error {
 	return bl.appendIPBlocks(IPBlocks)
 }
 
-func (bl *BlockList) appendIPBlocks(IPBlocks []string) error {
+func (bl *IPList) appendIPBlocks(IPBlocks []string) error {
 	var (
 		err   error
 		IPNet *net.IPNet
