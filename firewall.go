@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func Firewall(allowList *AllowIPTree, blockList *BlockList, fwBlockOverride func(r *http.Request) bool) func(http.Handler) http.Handler {
+func Firewall(allowList *IPList, blockList *IPList, fwBlockOverride func(r *http.Request) bool) func(http.Handler) http.Handler {
 	f := func(h http.Handler) http.Handler {
 		fn := func(w http.ResponseWriter, r *http.Request) {
 			// getting ip address without port
@@ -15,8 +15,8 @@ func Firewall(allowList *AllowIPTree, blockList *BlockList, fwBlockOverride func
 			ip := net.ParseIP(ipAddr)
 			if inBlockList, _ := blockList.Contains(ip); inBlockList {
 				// check if ip is not in allowList and is not being
-				// overriden by fwBlockOverride
-				if !allowList.Search(ip) && !fwBlockOverride(r) {
+				// overridden by fwBlockOverride
+				if inAllowList, _ := allowList.Contains(ip); !inAllowList && !fwBlockOverride(r) {
 					// ip is blocked
 					time.Sleep(29 * time.Second)
 					w.WriteHeader(403)

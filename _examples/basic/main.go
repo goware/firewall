@@ -10,9 +10,18 @@ import (
 
 func main() {
 	r := chi.NewRouter()
-	blockList, _ := firewall.NewIPBlockList(firewall.CloudProviderBlockList())
-	blockList.AppendIPBlocks([]string{"127.0.0.0/1", "::1/128"})
-	allowList, _ := firewall.NewIPAllowList([]string{"192.168.0.1"})
+	blockList, err := firewall.NewIPList(firewall.CloudProviderBlockList())
+	if err != nil {
+		panic(err.Error())
+	}
+	err = blockList.AppendIPBlocks([]string{"127.0.0.0/1", "::1/128"})
+	if err != nil {
+		panic(err.Error())
+	}
+	allowList, err := firewall.NewIPList([]string{"192.168.0.1/32", "::1/32"})
+	if err != nil {
+		panic(err.Error())
+	}
 	fwBlockOverride := func(r *http.Request) bool {
 		if r.Header.Get("internal") == "true" {
 			return true
