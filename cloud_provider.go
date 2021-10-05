@@ -57,11 +57,11 @@ func CloudProviderBlockList() (blockList []string) {
 }
 
 var (
-	//go:embed cmd/cloud-provider-data/aws-ip-ranges.json
+	//go:embed cloud-provider-data/aws-ip-ranges.json
 	awsFile []byte
-	//go:embed cmd/cloud-provider-data/azure-ip-ranges.json
+	//go:embed cloud-provider-data/azure-ip-ranges.json
 	azureFile []byte
-	//go:embed cmd/cloud-provider-data/gcp-ip-ranges.json
+	//go:embed cloud-provider-data/gcp-ip-ranges.json
 	gcpFile []byte
 )
 

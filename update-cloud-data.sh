@@ -6,7 +6,7 @@ echo $green
 
 LINKS="https://www.gstatic.com/ipranges/goog.json gcp-ip-ranges.json"
 
-cd ./cmd/cloud-provider-data
+cd ./cloud-provider-data
 
 # aws
 echo "Downloading AWS Ranges..."
