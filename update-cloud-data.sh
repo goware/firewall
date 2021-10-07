@@ -27,9 +27,20 @@ curl -s -L -o azure-original-ranges.json $AZURE_FILE_LINK
 echo "Converting Azure Ranges to new format..."
 go run ./main.go
 
+# Linode
+echo "Downloading Linode Ranges..."
+curl -s -L -o linode-ranges-original.csv "https://geoip.linode.com/"
+echo "prefix, country, subdivision, city, zipcode, allocation_size" > linode-ranges.csv
+echo "$(sed -e '1,3d' < linode-ranges-original.csv)" >> linode-ranges.csv
+
+# digital ocean
+echo "Downloading Digital Ocean Ranges..."
+echo "prefix, country, state, city, zipcode" > digital-ocean-ranges.csv
+echo "$(curl -L https://digitalocean.com/geo/google.csv)" >> digital-ocean-ranges.csv
 
 echo "done"
 
 echo "Cleaning downloaded files"
 
 rm azure-original-ranges.json
+rm linode-ranges-original.csv

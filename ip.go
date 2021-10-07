@@ -73,7 +73,7 @@ func isPrivateSubnet(ipAddress net.IP) bool {
 // getIPAddress gets the real ip address from headers
 // if not found it returns r.RemoteAddr
 func getIPAddress(r *http.Request) string {
-	for _, h := range []string{"X-Forwarded-For", "X-Real-Ip"} {
+	for _, h := range []string{"True-Client-IP", "X-Forwarded-For", "X-Real-Ip"} {
 		addresses := strings.Split(r.Header.Get(h), ",")
 		// march from right to left until we get a public address
 		// that will be the address right before our proxy.

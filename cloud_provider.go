@@ -3,6 +3,7 @@ package firewall
 import (
 	_ "embed"
 	"encoding/json"
+	"github.com/gocarina/gocsv"
 )
 
 var cloudProviderBlockList []string = nil
@@ -50,6 +51,24 @@ func CloudProviderBlockList() (blockList []string) {
 		}
 	}
 
+	// linode
+	var linodeRanges []*csvIPPrefix
+	gocsv.UnmarshalBytes(linodeFile, &linodeRanges)
+	for _, prefix := range linodeRanges {
+		if prefix.IPPrefix != "" {
+			blockList = append(blockList, prefix.IPPrefix)
+		}
+	}
+
+	// digital ocean
+	var digitalOceanRanges []*csvIPPrefix
+	gocsv.UnmarshalBytes(digitalOceanFile, &digitalOceanRanges)
+	for _, prefix := range digitalOceanRanges {
+		if prefix.IPPrefix != "" {
+			blockList = append(blockList, prefix.IPPrefix)
+		}
+	}
+
 	// memoize
 	cloudProviderBlockList = blockList
 
@@ -63,6 +82,10 @@ var (
 	azureFile []byte
 	//go:embed cloud-provider-data/gcp-ip-ranges.json
 	gcpFile []byte
+	//go:embed cloud-provider-data/linode-ranges.csv
+	linodeFile []byte
+	//go:embed cloud-provider-data/digital-ocean-ranges.csv
+	digitalOceanFile []byte
 )
 
 type awsRanges struct {
@@ -89,4 +112,8 @@ type gcpRanges struct {
 type gcpPrefix struct {
 	IPPrefix   string `json:"ipv4Prefix"`
 	IPv6Prefix string `json:"ipv6Prefix"`
+}
+
+type csvIPPrefix struct {
+	IPPrefix string `csv:"prefix"`
 }
