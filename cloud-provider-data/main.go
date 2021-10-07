@@ -9,11 +9,11 @@ import (
 )
 
 type azureOriginalRanges struct {
-	Values []azureValues `json:"azureValues"`
+	Values []azureValues `json:"values"`
 }
 
 type azureValues struct {
-	Properties azureProperties `json:"azureProperties"`
+	Properties azureProperties `json:"properties"`
 }
 
 type azureProperties struct {
