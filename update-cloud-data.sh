@@ -3,6 +3,7 @@
 green=`tput setaf 2`
 
 echo $green
+set -e 
 
 LINKS="https://www.gstatic.com/ipranges/goog.json gcp-ip-ranges.json"
 
