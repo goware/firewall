@@ -75,7 +75,7 @@ func isPrivateSubnet(ipAddress net.IP) bool {
 func getIPAddress(r *http.Request) string {
 	ipHeaders := []string{
 		"True-Client-IP",
-		"X-Forwarded-For", 
+		"X-Forwarded-For",
 		"X-Real-Ip",
 	}
 	for _, h := range ipHeaders {
@@ -83,8 +83,11 @@ func getIPAddress(r *http.Request) string {
 		// march from right to left until we get a public address
 		// that will be the address right before our proxy.
 		for i := len(addresses) - 1; i >= 0; i-- {
-			ip := strings.TrimSpace(addresses[i])
 			// header can contain spaces too, strip those out.
+			ip := strings.TrimSpace(addresses[i])
+			if ip == "" {
+				continue
+			}
 			realIP := net.ParseIP(ip)
 			if !realIP.IsGlobalUnicast() || isPrivateSubnet(realIP) {
 				// bad address, go to next
@@ -93,7 +96,7 @@ func getIPAddress(r *http.Request) string {
 			return ip
 		}
 	}
-	return r.RemoteAddr
+	return ipRemoteAddr(r.RemoteAddr)
 }
 
 // isIpv6 checks if the ip address is ipv6
@@ -114,4 +117,12 @@ func ipAddrWithoutPort(r *http.Request) string {
 	}
 	// return ipv4 address without port
 	return strings.Split(ipAddressFromRequest, ":")[0]
+}
+
+func ipRemoteAddr(remoteAddr string) string {
+	ip, _, err := net.SplitHostPort(remoteAddr)
+	if err != nil {
+		return ""
+	}
+	return ip
 }
